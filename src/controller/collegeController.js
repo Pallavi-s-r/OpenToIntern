@@ -1,4 +1,5 @@
 const CollegeModel = require('../models/collegeModel');
+const InternModel = require('../models/internModel');
 
 const createCollege = async function(req,res){
  try{  
@@ -11,4 +12,25 @@ const createCollege = async function(req,res){
         return res.status(500).send({status:false,message:error.message});
     }
 }
-module.exports.createCollege = createCollege;
+
+const getInternDetails = async(req,res)=>{
+    try{
+        const abbrevatedCollegeName = req.query.abbrevatedCollegeName;
+        const college = await CollegeModel.findOne({name:abbrevatedCollegeName});
+        if(!college){
+            return res.status(404).send({status:false,message:"no such college present"});
+        }
+        const interns = await InternModel.find({collegeId:college._id});
+
+        const responseData = {
+            name: college.name,
+            fullName: college.fullName,
+            logoLink: college.logoLink,
+            interns: interns
+          };
+        return res.status(200).send({status:true, data:responseData});
+    }catch(error){
+        return res.status(500).send({status:false,message:error.message});
+    }
+}
+module.exports = {createCollege,getInternDetails};

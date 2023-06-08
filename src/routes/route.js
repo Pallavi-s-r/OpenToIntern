@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const CollegeContrllr = require('../controller/collegeController');
-const createCollege = require('../controller/collegeController');
+const InternControllr = require('../controller/internController');
 router.get('/test-me', function(req,res){
     res.send("starting the 3rd project");
 })
@@ -15,4 +15,6 @@ Endpoint: BASE_URL/functionup/colleges
  */
 
 router.post('/functionup/colleges',CollegeContrllr.createCollege);
+router.post('/functionup/interns',InternControllr.createIntern);
+router.get('/functionup/collegeDetails',CollegeContrllr.getInternDetails);
 module.exports = router;
