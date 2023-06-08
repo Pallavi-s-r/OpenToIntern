@@ -1,0 +1,25 @@
+{
+  "name": "opentointern",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start":"nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pallavi-s-r/OpenToIntern.git"
+  },
+  "author": "Pallavi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pallavi-s-r/OpenToIntern/issues"
+  },
+  "homepage": "https://github.com/Pallavi-s-r/OpenToIntern#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2",
+    "nodemon": "^2.0.22"
+  }
+}
