@@ -1,6 +1,3 @@
-/** { name: {mandatory}, email: {mandatory, valid email, unique}, mobile: {mandatory, valid mobile number, unique}, collegeId: {ObjectId, ref to college model, isDeleted: {boolean, default: false}} */
-
-const validator = require('validator');
 
 const mongoose = require('mongoose');
 
@@ -8,8 +5,14 @@ const internModel = new mongoose.Schema({
    name:{
     type:String,
     required:true,
-    trim:true
+    trim:true,
+    validate:{
+      validator:  function (value) {
+          const regex = /^[a-zA-Z]+([\s][a-zA-Z]+)*$/
+          return regex.test(value);
+      },message:"invalid name format"
    },
+  },
   email:{
     type:String,
     required:true,
@@ -17,9 +20,9 @@ const internModel = new mongoose.Schema({
     trim:true,
     validate: {
         validator: function (email) {
-          return validator.isEmail(email);
-        },
-        message: 'Invalid email format'
+          const emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
+          return emailRegex.test(email);
+      }, message:"invalid email format"
    }
    },
    mobile:{
@@ -27,12 +30,6 @@ const internModel = new mongoose.Schema({
     required:true,
     unique:true,
     trim:true,
-//     validate: {
-//         validator: function (mobile) {
-//           return validator.isMobilePhone(mobile,'en-US');
-//         },
-//         message: 'Invalid mobile number'
-//    },
 validate: {
     validator: function (mobile) {
       const mobileNumberRegex = /^\+\d{1,3}\d{3,}$/;
