@@ -2,19 +2,10 @@ const express = require('express');
 const router = express.Router();
 const CollegeContrllr = require('../controller/collegeController');
 const InternControllr = require('../controller/internController');
-router.get('/test-me', function(req,res){
-    res.send("starting the 3rd project");
-})
+const Middleware = require('../middleware/middleware')
 
-/**POST /functionup/colleges
-Create a college - a document for each member of the group
+router.post('/functionup/colleges', Middleware.collegeValidation, CollegeContrllr.createCollege);
+router.post('/functionup/interns', Middleware.InternValidations, InternControllr.createIntern);
+router.get('/functionup/collegeDetails', CollegeContrllr.getInternDetails);
 
-The logo link will be provided to you by the mentors. This link is a s3 (Amazon's Simple Service) url. Try accessing the link to see if the link is public or not.
-
-Endpoint: BASE_URL/functionup/colleges
- */
-
-router.post('/functionup/colleges',CollegeContrllr.createCollege);
-router.post('/functionup/interns',InternControllr.createIntern);
-router.get('/functionup/collegeDetails',CollegeContrllr.getInternDetails);
 module.exports = router;
