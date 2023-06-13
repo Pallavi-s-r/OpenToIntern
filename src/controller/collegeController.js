@@ -1,67 +1,88 @@
-const CollegeModel = require('../models/collegeModel');
-const InternModel = require('../models/internModel');
+const collegeModel = require("../models/collegeModel");
+const internModel = require('../models/internModel')
+const checkValidUrl = require('valid-url');
+const axios = require('axios');
 
-const createCollege = async function(req,res){
- try{  
-    const data = req.body;
-    const {name, fullName, logoLink} = data;
-
-
-if(Object.keys(data).length===0){
-    return res.status(400).send({status:false,message:"Please enter valid College details"});
+const isValidRequestBody = function (requestBody) {
+    return Object.keys(requestBody).length > 0;
 }
-    const createdData = await CollegeModel.create(data)
 
-    return res.status(201).send({status:true,data:createdData});
-     
-}catch(error){
-        return res.status(500).send({status:false,message:error.message});
+const isValid = function (value) {
+    if (typeof value === "undefined" || value === null) {
+        return false;
+    }
+    if (typeof value === "string" && value.trim().length === 0) {
+        return false;
+    }
+    return true;
+}
+
+const createCollege = async function (req, res) {
+    try {
+        const requestBody = req.body;
+        if (!isValidRequestBody(requestBody)) {
+            return res.status(400).send({ status: false, message: "Invalid request parameters please provide college details" })
+        }
+
+        // Extract params
+        const { name, fullName, logoLink } = req.body;       // Object destructuring
+        if (!isValid(name)) {
+            return res.status(400).send({ status: false, message: "College name is required" })
+        }
+
+        if (!isValid(fullName)) {
+            return res.status(400).send({ status: false, message: "College's full name must be present" })
+        }
+
+        if (!isValid(logoLink)) {
+            return res.status(400).send({ status: false, message: "Logo link must be present" })
+        }
+
+        if (!checkValidUrl.isWebUri(logoLink.trim())) {
+            return res.status(400).send({ status: false, message: "Please enter a valid link" })
+        }
+
+        // let checkUrl = await axios.get(logoLink)
+        // .then(()=> longUrl)
+        // .catch(()=> null)
+
+        // if(!checkUrl){
+        //     return res.status(400).send({status:false,message:"The url you are providing is invalid URL"})
+        // }
+
+        let data = await collegeModel.create(requestBody);
+        res.status(201).send({ status: true, data: data })
+    }
+    catch (error) {
+        res.status(500).send({ status: false, message: error.message })
     }
 }
 
-//--------------------------------------------------------------------------------------------------------------------------
+const getInternDetails = async function (req, res) {
+    try {
+        let abbreviatedName = req.params.collegeName;
 
-// const getCollegeDetails = async(req,res)=>{
-//     try{
-//         const abbrevatedCollegeName = req.query.abbrevatedCollegeName;
+        let college = await collegeModel.findOne({ name: abbreviatedName });
+        if (!college) {
+            return res.status(404).send({ status: false, message: `No college exists with name ${college.name}` });
+        }
 
-//         const college = await CollegeModel.findOne({name:abbrevatedCollegeName});
+        let interns = await internModel.find({ collegeId: college._id });
+        if (interns.length === 0) {
+            return res.status(404).send({ status: false, message: `No interns found for the college ${college.name}` })
+        }
 
-//         if(!college){
-//             return res.status(404).send({status:false,message:"no such college present"});
-//         }
-//         const interns = await InternModel.findOne({collegeId:college._id, isDeleted:false}).select({collegeId:0,isDeleted:0,__v:0});
-        
-//         if(!interns){
-//             return res.status(404).send({status:false,message:"No applicants for internships"});
-//         }
-//         const responseData = {
-//             name: college.name,
-//             fullName: college.fullName,
-//             logoLink: college.logoLink,
-//             interns: interns
-//           };
-          
-//         return res.status(200).send({status:true, data:responseData});
-//     }catch(error){
-//         return res.status(500).send({status:false,message:error.message});
-//     }
-// }
-
-const getDetails = async function(req,res){
-try{
-    const shrtName = req.query.shrtName;
-    const college = await CollegeModel.findOne({name:shrtName});
-    const interns = await InternModel.find({collegeId:college._id, isDeleted:false});
-    const responseData ={
-        name:college.name,
-        fullName:college.fullName,
-        logoLink:college.logoLink,
-        interns:interns
-    };
-   return res.send({status:true, message:responseData});
-}catch(error){
-    res.send({status:false, mesage:error.mesage});
+        const responseData = {
+            name: college.name,
+            fullName: college.fullName,
+            logoLink: college.logoLink,
+            interns: interns
+        }
+        res.status(200).send({ data: responseData });
+    }
+    catch(error){
+        res.status(500).send({status:false,message:error.message})
+    }
 }
-}
-module.exports = {createCollege,getDetails};
+
+module.exports = { createCollege, getInternDetails }
