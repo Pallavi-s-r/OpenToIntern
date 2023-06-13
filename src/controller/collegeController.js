@@ -17,47 +17,100 @@ const isValid = function (value) {
     return true;
 }
 
+// const createCollege = async function (req, res) {
+//     try {
+//         const requestBody = req.body;
+//         if (!isValidRequestBody(requestBody)) {
+//             return res.status(400).send({ status: false, message: "Invalid request parameters please provide college details" })
+//         }
+
+//         // Extract params
+//         const { name, fullName, logoLink } = req.body;       // Object destructuring
+//         if (!isValid(name)) {
+//             return res.status(400).send({ status: false, message: "College name is required" })
+//         }
+
+//         if (!isValid(fullName)) {
+//             return res.status(400).send({ status: false, message: "College's full name must be present" })
+//         }
+
+//         if (!isValid(logoLink)) {
+//             return res.status(400).send({ status: false, message: "Logo link must be present" })
+//         }
+
+//         if (!checkValidUrl.isWebUri(logoLink.trim())) {
+//             return res.status(400).send({ status: false, message: "Please enter a valid link" })
+//         }
+
+//         // let checkUrl = await axios.get(logoLink)
+//         // .then(()=> longUrl)
+//         // .catch(()=> null)
+
+//         // if(!checkUrl){
+//         //     return res.status(400).send({status:false,message:"The url you are providing is invalid URL"})
+//         // }
+
+//         let data = await collegeModel.create(requestBody);
+//         res.status(201).send({ status: true, data: data })
+//     }
+//     catch (error) {
+//         res.status(500).send({ status: false, message: error.message })
+//     }
+// }
 const createCollege = async function (req, res) {
     try {
-        const requestBody = req.body;
-        if (!isValidRequestBody(requestBody)) {
-            return res.status(400).send({ status: false, message: "Invalid request parameters please provide college details" })
-        }
-
-        // Extract params
-        const { name, fullName, logoLink } = req.body;       // Object destructuring
-        if (!isValid(name)) {
-            return res.status(400).send({ status: false, message: "College name is required" })
-        }
-
-        if (!isValid(fullName)) {
-            return res.status(400).send({ status: false, message: "College's full name must be present" })
-        }
-
-        if (!isValid(logoLink)) {
-            return res.status(400).send({ status: false, message: "Logo link must be present" })
-        }
-
-        if (!checkValidUrl.isWebUri(logoLink.trim())) {
-            return res.status(400).send({ status: false, message: "Please enter a valid link" })
-        }
-
-        // let checkUrl = await axios.get(logoLink)
-        // .then(()=> longUrl)
-        // .catch(()=> null)
-
-        // if(!checkUrl){
-        //     return res.status(400).send({status:false,message:"The url you are providing is invalid URL"})
-        // }
-
-        let data = await collegeModel.create(requestBody);
-        res.status(201).send({ status: true, data: data })
+      const requestBody = req.body;
+  
+      if (!isValidRequestBody(requestBody)) {
+        return res.status(400).send({
+          status: false,
+          message: "Invalid request parameters, please provide college details"
+        });
+      }
+  
+      const { name, fullName, logoLink } = requestBody;
+  
+      if (!isValid(name)) {
+        return res.status(400).send({
+          status: false,
+          message: "College name is required"
+        });
+      }
+  
+      if (!isValid(fullName)) {
+        return res.status(400).send({
+          status: false,
+          message: "College's full name must be present"
+        });
+      }
+  
+      if (!isValid(logoLink)) {
+        return res.status(400).send({
+          status: false,
+          message: "Logo link must be present"
+        });
+      }
+  
+      if (!checkValidUrl.isWebUri(logoLink.trim())) {
+        return res.status(400).send({
+          status: false,
+          message: "Please enter a valid link"
+        });
+      }
+  
+      let data = await collegeModel.create(requestBody);
+      res.status(201).send({
+        status: true,
+        data: data
+      });
+    } catch (error) {
+      res.status(500).send({
+        status: false,
+        message: error.message
+      });
     }
-    catch (error) {
-        res.status(500).send({ status: false, message: error.message })
-    }
-}
-
+  };
+  
 const getInternDetails = async function (req, res) {
     try {
         let abbreviatedName = req.params.collegeName;
